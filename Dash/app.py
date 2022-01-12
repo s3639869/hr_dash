@@ -9,12 +9,17 @@ import plotly.graph_objects as go
 
 # load our pre-cleaned data in. This loads the data from our earlier datacleaning and analysis.
 df = pd.read_csv('../cleaned_train_df.csv')
+pred_res_df = pd.read_csv('../pred_res.csv')
 
 # get the columns of interest, put them in an array. Map their names to more understandable ones using a dictionary
 df['company_size']=df['company_size'].astype(str).str.replace('/','-')
 df['target']=df['target'].astype(str).str.replace('0','No').replace('1','Yes')
 columns1 = ["gender","education_level","major_discipline","enrolled_university","relevent_experience","experience","company_size","company_type","last_new_job"]
 column1_dict = {"gender":"Gender","education_level":"Education Level","major_discipline":"Major Discipline","enrolled_university":"University Enrolment","relevent_experience":"Years of Relevant Experience (in Data Science)","experience":"Total Years of Experience","company_size":"Number of Employees in current company","company_type":"Type of current company","last_new_job":"Years since last job change"}
+
+# translate pred_res_df column labels into user friendly titles
+model_dict = {"prediction_lr":"Logistic Regression Model","prediction_rf":"Random Forests Model", "prediction_knn":"K-Nearest Neighbors Model"}
+model_col = ["prediction_lr","prediction_rf","prediction_knn"]
 
 # Initialise the app
 app = dash.Dash(__name__)
@@ -41,6 +46,25 @@ def update_plot(selector2):
     figure.update_layout(legend_title_text='Looking for a job change')
    #Return the figure we produce so the HTML can be updated with it.
     return figure
+
+#Callback for the third interactive graph - boxplot
+@app.callback( Output('modelplot', 'figure'),
+              [Input('selector3', 'value')])
+def update_plot(selector3):
+    # Get user friendly title of selected model
+    selected = model_dict.get(selector3)
+
+    # Get array from pred_res_df based on user-selected model
+    model_arr = pred_res_df[selector3].to_numpy()
+
+    result_arr= pred_res_df['real_result'].to_numpy()
+
+    # Create confusion matrix figure
+    figure = px.imshow([model_arr, result_arr], aspect="auto", y=[selected + " Result", "Actual Result"], 
+        labels=dict(x="Number of Entries", color = "Looking for a job change"), title=selected + " Confusion Matrix (0 - Not looking for a job change, 1 - Looking for a job change)")
+    # Return the figure we produce so the HTML can be updated with it.
+    return figure
+
 
 # Define the app layout. We re-use a lot from Tutorial 3.
 app.layout = html.Div(
@@ -94,8 +118,8 @@ app.layout = html.Div(
                                            children=[
                                                dcc.Dropdown(id='selector3',
                                                             options=[
-                                                                {"label": column1_dict.get(i), "value": i}
-                                                                for i in columns1
+                                                                {"label": model_dict.get(i), "value": i}
+                                                                for i in model_col
                                                             ],
                                                             multi=False,
                                                             placeholder="Select a column",
