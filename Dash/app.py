@@ -41,7 +41,9 @@ def update_plot(selector1):
 @app.callback( Output('boxplot', 'figure'),
               [Input('selector2', 'value')])
 def update_plot(selector2):
+    # get the selected value
     selected = column1_dict.get(selector2)
+    # draw boxplot for the selected column
     figure = px.box(df, x=selector2, y="training_hours", color="target",labels={selector2:selected,"training_hours":"Training hours","target":"Looking for a job change"},title="Boxplot breakdown of Training hours by "+str(selected)+" and whether they affect job-changing decisions")
     figure.update_layout(legend_title_text='Looking for a job change')
    #Return the figure we produce so the HTML can be updated with it.
@@ -66,7 +68,7 @@ def update_plot(selector3):
     return figure
 
 
-# Define the app layout. We re-use a lot from Tutorial 3.
+# Define the app layout
 app.layout = html.Div(
     children=[
         html.Div(className='row',  # Define the row element
@@ -76,9 +78,9 @@ app.layout = html.Div(
                               children = [
                                   html.H1('Job change indicator Visualizer'),
                                   html.H2('1.Variables affecting Job change decisions'),
-                                  html.P('''Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.'''),
-                                  html.P('''Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.'''),
-                                  html.P('''When an unknown printer took a galley of type and scrambled it to make a type specimen book.'''),
+                                  html.P('''The first plot visualizes how the number of people looking for job changes can vary between different groups.'''),
+                                  html.P('''Recruiters can look at this graph to have a general idea of the profile of people who are taking training because they want a job change.'''),
+                                  html.P('''This can help them narrow down possible candidates more easily and make recruitment more efficient.'''),
                                   # Adding option to select columns -- this is the first column list
                                   html.Div(className='div-for-dropdown',
                                            children=[
@@ -92,10 +94,9 @@ app.layout = html.Div(
                                                             
                                                            )
                                            ]
-                                          ),html.Br(),html.H2('2.Training hours reflecting Job change decisions'),
-                                  html.P('''Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.'''),
-                                  html.P('''Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.'''),
-                                  html.P('''When an unknown printer took a galley of type and scrambled it to make a type specimen book.'''),
+                                          ),html.Br(),html.H2('2.Training hours and Job change decisions'),
+                                  html.P('''The second plot visualizes the training hours vary depending on the group and whether they want to change jobs.'''),
+                                  html.P('''Again, this graph can help recruiters find possible candidates by combining different variables and looking for those within a specific training hours range.'''),
                                   # Adding option to select columns -- this is the second column list
                                   html.Div(className='div-for-dropdown',
                                            children=[
@@ -109,11 +110,10 @@ app.layout = html.Div(
                                                             
                                                            )
                                            ]
-                                          ),html.Br(),html.H2('3.Model plot'),
-                                  html.P('''Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.'''),
-                                  html.P('''Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.'''),
-                                  html.P('''When an unknown printer took a galley of type and scrambled it to make a type specimen book.'''),
-                                  # Adding option to select columns -- this is the third column list
+                                          ),html.Br(),html.H2('3.Model confusion matrix plot'),
+                                  html.P('''A heatmap-based confusion matrix plot for all three models built by our team.'''),
+                                  html.P('''Each option in the dropdown represents one model. The plot shows the model predicted result (above) compared to the actual result (below - taken from the dataset). If the prediction matches the actual result, they will have the same color.'''),
+                                  # Adding option to select models -- this is the model list
                                   html.Div(className='div-for-dropdown',
                                            children=[
                                                dcc.Dropdown(id='selector3',
@@ -122,7 +122,7 @@ app.layout = html.Div(
                                                                 for i in model_col
                                                             ],
                                                             multi=False,
-                                                            placeholder="Select a column",
+                                                            placeholder="Select a model",
                                                             
                                                            )
                                            ]
